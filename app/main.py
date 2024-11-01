@@ -22,7 +22,7 @@ EXPIRES_IN_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")) # 30 minutos
 DATABASE_URL = f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_NAME')}"
 ENGINE = create_engine(DATABASE_URL)
 BASE = declarative_base()
-SESSION = scoped_session(sessionmaker(bind=ENGINE, autoflush=False))
+BASE.metadata.bind = ENGINE
 
 # Modelo de Usuário
 class Usuario(BASE):
@@ -33,7 +33,10 @@ class Usuario(BASE):
     email = Column(String, unique=True, index=True)
     senha_hashed = Column(String)
 
+# Criar todas as tabelas no banco de dados
 BASE.metadata.create_all(ENGINE)
+
+SESSION = scoped_session(sessionmaker(bind=ENGINE, autoflush=False))
 
 app = FastAPI()
 security = HTTPBearer()
