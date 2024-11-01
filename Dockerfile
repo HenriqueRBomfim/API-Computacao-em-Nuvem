@@ -6,6 +6,8 @@ RUN apt-get update && \
     apt-get install -y net-tools && \
     rm -rf /var/lib/apt/lists/*
 
+RUN pip install --upgrade pip
+
 # Definir diretório de trabalho dentro do contêiner
 WORKDIR /app
 
@@ -21,5 +23,5 @@ COPY . .
 # Definir a porta em que o FastAPI será exposto (a porta interna do container)
 EXPOSE 8000
 
-# Comando para iniciar o aplicativo
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Comando para iniciar o aplicativo com a variável de ambiente PORT
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

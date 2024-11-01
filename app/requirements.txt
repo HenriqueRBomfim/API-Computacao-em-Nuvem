@@ -1,8 +1,0 @@
-fastapi
-pydantic
-datetime
-jwt
-os
-dotenv
-pyjwt
-psycopg2-binary
