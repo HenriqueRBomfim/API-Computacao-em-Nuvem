@@ -4,7 +4,7 @@ Henrique Rocha Bomfim
 
 Eu fiz os endpoints com FastAPI em Python, orquestrei o banco de dados com SQLAlchemy no PostgresSQL e retorno dados de notícias do IBGE.
 
-Para executar a aplicação, crie uma pasta, coloque o arquivo compose.yaml e digite docker-compose up --build
+Para executar a aplicação, crie uma pasta, coloque o arquivo compose.yaml e digite docker compose up -d
 
 Link de um vídeo mostrando a API: https://youtu.be/w7tym0sMWu4
 

@@ -1,28 +1,36 @@
 from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.security import HTTPBearer
 from pydantic import BaseModel
-from datetime import datetime, timedelta
-import jwt
-import bcrypt
+from datetime import datetime, timedelta, timezone
 import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, Column, Integer, String
-from sqlalchemy.orm import declarative_base, scoped_session, sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 import httpx
+from jwt import encode, decode, ExpiredSignatureError, InvalidTokenError
+from pwdlib import PasswordHash
 
 # Carregar variáveis de ambiente
 load_dotenv()
 
 # Configurações
-SECRET_KEY = os.getenv("SECRET_KEY") #hidsa53sdadshDADBJSKsd1d2as1d3
-ALGORITHM = os.getenv("ALGORITHM") #HS256
-EXPIRES_IN_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")) # 30 minutos
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+pwd_context = PasswordHash.recommended()
+
+POSTGRES_HOST = "db"
+POSTGRES_PORT = 5432
 
 # Configuração do SQLAlchemy para conectar ao PostgreSQL
-DATABASE_URL = f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_NAME')}"
+#DATABASE_URL = f"postgresql+psycopg2://henrique:segredo@db:5432/superprojetao"
+DATABASE_URL = f"postgresql://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@{POSTGRES_HOST}:{POSTGRES_PORT}/{os.getenv('POSTGRES_DB')}"
+
 ENGINE = create_engine(DATABASE_URL)
+
+SESSION = sessionmaker(autocommit=False, bind=ENGINE, autoflush=False)
+
 BASE = declarative_base()
-BASE.metadata.bind = ENGINE
 
 # Modelo de Usuário
 class Usuario(BASE):
@@ -33,20 +41,11 @@ class Usuario(BASE):
     email = Column(String, unique=True, index=True)
     senha_hashed = Column(String)
 
-# Criar todas as tabelas no banco de dados
-BASE.metadata.create_all(ENGINE)
+def get_password_hash(password: str):
+    return pwd_context.hash(password)
 
-SESSION = scoped_session(sessionmaker(bind=ENGINE, autoflush=False))
-
-app = FastAPI()
-security = HTTPBearer()
-
-# Funções de auxílio para o jwt e hash da senha
-def hash_senha(senha: str) -> str:
-    return bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-
-def verificar_senha(senha: str, senha_hashed: str) -> bool:
-    return bcrypt.checkpw(senha.encode('utf-8'), senha_hashed.encode('utf-8'))
+def verify_password(plain_password: str, hashed_password: str):
+    return pwd_context.verify(plain_password, hashed_password)
 
 # Modelos de Dados
 class RegistrarRequest(BaseModel):
@@ -61,65 +60,72 @@ class LoginRequest(BaseModel):
 class TokenResponse(BaseModel):
     jwt: str
 
-# Funções de auxílio para o jwt
-def criar_token_jwt(email: str, nome: str):
-    expire = datetime.utcnow() + timedelta(minutes=EXPIRES_IN_MINUTES)
-    payload = {
+def create_access_token(email: str, nome: str):
+    expire = datetime.now(timezone.utc) + timedelta(
+        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
+    )
+    to_encode = {
         "nome": nome,
         "email": email,
         "exp": expire
     }
-    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
-    return token
+    to_encode.update({'exp': expire})
+    encoded_jwt = encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
 
-def verificar_token_jwt(token: str):
+def test_jwt(token: str):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = decode(token, SECRET_KEY, algorithms=['HS256'])
         return payload
-    except jwt.ExpiredSignatureError:
+    except ExpiredSignatureError:
         raise HTTPException(status_code=403, detail="Token expirado")
-    except jwt.InvalidTokenError:
+    except InvalidTokenError:
         raise HTTPException(status_code=403, detail="Token inválido")
+
+BASE.metadata.create_all(bind = ENGINE)
+
+app = FastAPI()
+security = HTTPBearer()
 
 # Endpoints
 @app.post("/registrar", response_model=TokenResponse)
 def registrar(registrar_request: RegistrarRequest):
     db = SESSION()
-    # Verificar se o email já está cadastrado
     usuario_existente = db.query(Usuario).filter(Usuario.email == registrar_request.email).first()
     if usuario_existente:
         raise HTTPException(status_code=409, detail="Email já cadastrado")
 
-    # Criar novo usuário
     usuario = Usuario(
         nome=registrar_request.nome,
         email=registrar_request.email,
-        senha_hashed=hash_senha(registrar_request.senha)
+        senha_hashed=get_password_hash(registrar_request.senha)
     )
     db.add(usuario)
     db.commit()
     db.refresh(usuario)
 
-    jwt_token = criar_token_jwt(usuario.email, usuario.nome)
+    jwt_token = create_access_token(usuario.email, usuario.nome)
     return {"jwt": jwt_token}
 
 @app.post("/login", response_model=TokenResponse)
 def login(login_request: LoginRequest):
     db = SESSION()
-    # Buscar usuário pelo nome
     usuario = db.query(Usuario).filter(Usuario.email == login_request.email).first()
-    if not usuario or not verificar_senha(login_request.senha, usuario.senha_hashed):
+    if not usuario or not verify_password(login_request.senha, usuario.senha_hashed):
         raise HTTPException(status_code=403, detail="Credenciais inválidas")
 
-    jwt_token = criar_token_jwt(usuario.email, usuario.nome)
+    jwt_token = create_access_token(usuario.email, usuario.nome)
     return {"jwt": jwt_token}
 
 @app.get("/consultar")
-async def consultar(token: str):
-    if token is None:
-        raise HTTPException(status_code=403, detail="Token de autorização não encontrado")
-
-    verificar_token_jwt(token)
+async def consultar(authorization: str = Header(...)):
+    print(authorization)
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=403, detail="Token de autorização inválido")
+    
+    token = authorization.split(" ")[1]
+    
+    test_jwt(token)
 
     url = "http://servicodados.ibge.gov.br/api/v3/noticias/"
     async with httpx.AsyncClient() as client:

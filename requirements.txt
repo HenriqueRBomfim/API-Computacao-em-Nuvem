@@ -4,6 +4,8 @@ python-dotenv
 psycopg2-binary
 bcrypt
 PyJWT
-SQLAlchemy
+sqlalchemy
 uvicorn
 httpx
+pwdlib
+pwdlib[argon2]
