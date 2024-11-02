@@ -91,7 +91,7 @@ O endpoint /consultar é do tipo GET, recebe o token JWT no Header "Authorizatio
 Na imagem acima, foi usado o Postman para testar a seguinte curl:
 
 ```
-curl -X 'GET' 'http://localhost:8000/consultar' -H 'accept: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub21lIjoic3RyaW5nTiIsImVtYWlsIjoic3RyaW5nTiIsImV4cCI6MTczMDU2MzI2MX0.pF5jWSha6E-rSaF8j9HlLDzYG_S3d3KuYnhONAPQobI'
+curl -X 'GET' 'http://localhost:8000/consultar' -H 'accept: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub21lIjoic3RyaW5nZyIsImVtYWlsIjoic3RyaW5nZyIsImV4cCI6MTczMDU2NDY4OX0.oeU8rlRTwXwD9ZBJcoNzxc1G7ib2wEFXgE0C5yGVtfs'
 ```
 
 Assim, o cabeçalho Authorization foi passado com um Token válido.
