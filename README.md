@@ -45,6 +45,20 @@ Uma resposta possível é o retorno de um token JWT, como na imagem abaixo:
 
 ![/registrar_response](./img/registrar_response.png)
 
+Um exemplo de curl para registro, pode ser testada no Postman:
+
+```
+curl -X 'POST' \
+  'http://localhost:8000/registrar' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "nome": "string",
+  "email": "string",
+  "senha": "string"
+}'
+```
+
 **Login**
 
 O endpoint Login faz uma requisitação do tipo POST e recebe os argumentos email e senha através do formato JSON. Isso pode ser visto na figura abaixo:
@@ -55,6 +69,19 @@ Uma resposta possível é o token JWT para o payload passado, como na imagem aba
 
 ![/login_response](./img/login_response.png)
 
+Um exemplo de curl para teste do login, pode ser testada no Postman:
+
+```
+curl -X 'POST' \
+  'http://localhost:8000/login' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "email": "string",
+  "senha": "string"
+}'
+```
+
 **Consultar**
 
 O endpoint /consultar é do tipo GET, recebe o token JWT no Header "Authorization Bearer "jwt" " e retorna dados de API externa, no caso do IBGE, caso o token seja válido. Um exemplo de requisitação é a seguinte:
@@ -63,7 +90,9 @@ O endpoint /consultar é do tipo GET, recebe o token JWT no Header "Authorizatio
 
 Na imagem acima, foi usado o Postman para testar a seguinte curl:
 
+```
 curl -X 'GET' 'http://localhost:8000/consultar' -H 'accept: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub21lIjoic3RyaW5nTiIsImVtYWlsIjoic3RyaW5nTiIsImV4cCI6MTczMDU2MzI2MX0.pF5jWSha6E-rSaF8j9HlLDzYG_S3d3KuYnhONAPQobI'
+```
 
 Assim, o cabeçalho Authorization foi passado com um Token válido.
 
@@ -84,3 +113,11 @@ O endpoint Usuarios faz uma requisição do tipo GET sem argumentos, conforme fi
 E retornar todos os nomes de usuários da base de dados, conforme figura abaixo:
 
 ![/usuarios_response](./img/usuarios_response.png)
+
+Para consultar os usuarios na API, pode ser usar o seguinte curl no Postman:
+
+```
+curl -X 'GET' \
+  'http://localhost:8000/usuarios' \
+  -H 'accept: application/json'
+```
