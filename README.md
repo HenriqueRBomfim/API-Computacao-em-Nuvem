@@ -57,7 +57,23 @@ Uma resposta possível é o token JWT para o payload passado, como na imagem aba
 
 **Consultar**
 
-O endpoint /consultar é do tipo GET, recebe o token JWT no Header e retorna dados de API externa, no caso do IBGE, caso o token seja válido. Um exemplo de requisitação é a seguinte:
+O endpoint /consultar é do tipo GET, recebe o token JWT no Header "Authorization Bearer "jwt" " e retorna dados de API externa, no caso do IBGE, caso o token seja válido. Um exemplo de requisitação é a seguinte:
+
+![/consulta](./img/consulta.png)
+
+Na imagem acima, foi usado o Postman para testar a seguinte curl:
+
+curl -X 'GET' 'http://localhost:8000/consultar' -H 'accept: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub21lIjoic3RyaW5nTiIsImVtYWlsIjoic3RyaW5nTiIsImV4cCI6MTczMDU2MzI2MX0.pF5jWSha6E-rSaF8j9HlLDzYG_S3d3KuYnhONAPQobI'
+
+Assim, o cabeçalho Authorization foi passado com um Token válido.
+
+Caso digitassemos um token inválido, o resultado seria este:
+
+![/consulta_invalida](./img/consulta_invalida.png)
+
+Caso o cabeçalho não seja fornecido corretamente, o response será como na imagem a seguir:
+
+![/consulta_sem_Authorization](./img/consulta_sem_Authorization.png)
 
 **Consulta de usuários**
 

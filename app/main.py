@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends, Header
+from fastapi import FastAPI, HTTPException, Depends, Header, Query
 from fastapi.security import HTTPBearer
 from pydantic import BaseModel
 from datetime import datetime, timedelta, timezone
@@ -118,16 +118,15 @@ def login(login_request: LoginRequest):
     return {"jwt": jwt_token}
 
 @app.get("/consultar")
-async def consultar(authorization: str):
+async def consultar(Authorization: str = Header(..., description="Digite Bearer 'token'")):
     """
-    Digite o token de autorização no formato "Bearer <token>"
+    Digite o token de autorização no formato "Bearer 'token'"
     """
-    print(authorization)
 
-    if not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=403, detail="Token de autorização inválido")
+    if not Authorization.startswith("Bearer "):
+        raise HTTPException(status_code=403, detail=f"Token de autorização inválido")
 
-    token = authorization.split(" ")[1]
+    token = Authorization.split(" ")[1]
     
     test_jwt(token)
 
