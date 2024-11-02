@@ -118,11 +118,15 @@ def login(login_request: LoginRequest):
     return {"jwt": jwt_token}
 
 @app.get("/consultar")
-async def consultar(authorization: str = Header(...)):
+async def consultar(authorization: str):
+    """
+    Digite o token de autorização no formato "Bearer <token>"
+    """
     print(authorization)
+
     if not authorization.startswith("Bearer "):
         raise HTTPException(status_code=403, detail="Token de autorização inválido")
-    
+
     token = authorization.split(" ")[1]
     
     test_jwt(token)

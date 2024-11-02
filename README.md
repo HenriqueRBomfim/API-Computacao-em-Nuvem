@@ -19,7 +19,7 @@ Para acessar o Docker Hub do projeto, pode-se acessar o link a seguir: https://h
 
 # Onde encontrar o compose.yaml
 
-Para encontrar o arquivo compose.yaml, deve-se acessar a página inicial do repositório e baixar o arquivo compose.yaml, não é necessário acessar qualquer pasta para isso. O caminho do arquivo pode ser pego a seguir: compose.yaml
+Para encontrar o arquivo compose.yaml, deve-se acessar a página inicial do repositório e baixar o arquivo compose.yaml, não é necessário acessar qualquer pasta para isso. O caminho do arquivo pode ser pego a seguir: [Compose.yaml](./compose.yaml)
 
 # Comandos usados para publicação no Docker Hub
 
@@ -54,6 +54,10 @@ O endpoint Login faz uma requisitação do tipo POST e recebe os argumentos emai
 Uma resposta possível é o token JWT para o payload passado, como na imagem abaixo:
 
 ![/login_response](./img/login_response.png)
+
+**Consultar**
+
+O endpoint /consultar é do tipo GET, recebe o token JWT no Header e retorna dados de API externa, no caso do IBGE, caso o token seja válido. Um exemplo de requisitação é a seguinte:
 
 **Consulta de usuários**
 
