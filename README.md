@@ -5,6 +5,8 @@ Autor: Henrique Rocha Bomfim
 Este repositório é o local que contém a explicação da API de criação de usuários, login e consulta de dados do IBGE feito pelo Henrique Rocha em 2024.
 Os endpoints foram feitos com FastAPI em Python. O banco de dados foi orquestrado com SQLAlchemy em PostgresSQL e a consulta de dados com o token JWT retorna dados atualizados de notícias do IBGE.
 
+AWS ao final
+
 # Executando a aplicação
 
 Para executar a aplicação, crie uma pasta, coloque o arquivo compose.yaml e digite "docker compose up -d"
@@ -121,3 +123,8 @@ curl -X 'GET' \
   'http://localhost:8000/usuarios' \
   -H 'accept: application/json'
 ```
+
+**AWS**
+Link para acesso a URL da AWS:
+
+http://aac214db873ef4f75bf20e178f72676f-917515047.us-east-1.elb.amazonaws.com/docs
