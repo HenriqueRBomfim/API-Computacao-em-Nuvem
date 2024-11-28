@@ -69,6 +69,60 @@ Aqui, foram definidas as roles que seriam usadas:
 
 ![/roles](./img/roles.png)
 
+## 4. Criação da nuvem:
+
+Foi utilizado o serviço CloudFormation para criar um esquema de nuvem a partir do link fornecido na referência: [Arquivo padrão para criação da VPC](https://www.youtube.com/redirect?event=comments&redir_token=QUFFLUhqblhiVUxkeGg3SUdaSWdSRXliQ2JSTHVOS3VTQXxBQ3Jtc0ttdkhldzFLWmJjeGhPS3NqVVIxUnR4M0dFQ2QtREQxbWk0Q21HYWJwQjY2OENkUDB4dVNxclhlQ0VPUjdaRzE4MXZNTEkwUmhZQ3lDeGNpMDZnVmc4OEFQVFYzWDdGNmdfYmJTYXcyb3FvVWNURk5ibw&q=https%3A%2F%2Fs3.us-west-2.amazonaws.com%2Famazon-eks%2Fcloudformation%2F2020-10-29%2Famazon-eks-vpc-private-subnets.yaml)
+
+Nesse esquema, foram geradas as subnets, VPC, rotas, security group e outros recursos necessários para fazer o deploy.
+
+## 5. Criação do Cluster:
+
+Com a role CloudAWSClusterRole e a nuvem criadas, pude fazer o Cluster do EKS: 
+
+Seleção da role e de um nome
+![cluster1](./img/cluster1.png)
+
+Seleção da configuração de rede feita pelo CloudFormation
+![network](./img/network.png)
+
+Após isso, só fui clicando em next. 
+
+## 6. Criação do Node Group:
+
+Foi criado um grupo de nós para que houvesse sempre um nó para o banco de dados e outro para a API. Foi usada uma instância do tipo t3.medium.
+
+## 7. Uso do kubectl:
+
+Para poder usar o kubectl, foi necessário indicar para ele qual o Cluster EKS da sessão ele iria controlar:
+
+```
+aws eks update-kubeconfig --name eks-live
+```
+
+Após isso, criei uma pasta chamada k8s e um arquivo chamado deployment.yaml dentro dela. Nesse arquivo, coloquei todas as instruções necessárias para que o kubectl conseguisse fazer deploy da minha aplicação no Cluster.
+
+```
+kubectl apply -f k8s/
+```
+
+Após fazer isso, foram adicionados dois novos PODs ao Cluster EKS: app-deployment e db. Esses PODs são refeitos quando algo de errado acontece ou eles são deletados, garantindo consistência na aplicação.
+
+Para ver os PODs ativos da aplicação, pode-se usar este comando:
+
+```
+kubectl get pods
+```
+
+Para ver todos os recursos e informações do Cluster, foi utilizado o comando:
+```
+kubectl get all
+```
+
+Para obter o link da aplicação, foi utilizado o comando:
+```
+kubectl get svc app-service
+```
+
 # Documentação dos EndPoints
 
 **Registrar**
