@@ -192,7 +192,7 @@ O endpoint Usuarios faz uma requisição do tipo GET sem argumentos, conforme fi
 
 ![/usuariosAWS](./img/usuariosAWS.png)
 
-Para consultar os usuarios na API, pode ser usar o seguinte curl no Postman:
+Para consultar os usuarios na API, pode-se usar o seguinte curl no Postman:
 
 ```
 curl -X 'GET' \
