@@ -190,7 +190,7 @@ Caso o cabeçalho não seja fornecido corretamente, o response será como na ima
 
 O endpoint Usuarios faz uma requisição do tipo GET sem argumentos, conforme figura abaixo:
 
-![/usuarios](./img/usuarios.png)
+![/usuariosAWS](./img/usuariosAWS.png)
 
 Para consultar os usuarios na API, pode ser usar o seguinte curl no Postman:
 
