@@ -128,3 +128,7 @@ curl -X 'GET' \
 Link para acesso a URL da AWS:
 
 http://aac214db873ef4f75bf20e178f72676f-917515047.us-east-1.elb.amazonaws.com/docs
+
+Link do vídeo rodando na AWS:
+
+https://youtu.be/CTqpEHfANo4
