@@ -19,7 +19,7 @@ Foi realizado um vídeo explicando brevemente os serviços AWS que estão fazend
 
 # Onde encontrar o deployment.yaml
 
-Para encontrar o arquivo deployment.yaml, deve-se acessar a página inicial do repositório, clicar na pasta k8s e entrar no arquivo deployment.yaml. O caminho do arquivo pode ser pego a seguir: [deployment.yaml](k8s\deployment.yaml)
+Para encontrar o arquivo deployment.yaml, deve-se acessar a página inicial do repositório, clicar na pasta k8s e entrar no arquivo deployment.yaml. O caminho do arquivo pode ser pego a seguir: [deployment.yaml](k8s/deployment.yaml)
 
 Obs: Tanto os deployments da API e da DataBase quanto os seus respectivos serviços foram gerados no mesmo arquivo acima.
 
